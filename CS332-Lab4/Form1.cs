@@ -167,5 +167,21 @@ namespace CS332_Lab4
 
             e.Graphics.DrawLine(Pens.Red, startPoint, endPoint);
         }
+
+        //Очистка picturebox'a.
+        private void button2_Click(object sender, EventArgs e)
+        {
+            g.Clear(Color.White);
+            startPoint = endPoint = Point.Empty;
+            Array.Clear(edge, 0, edge.Length);
+            Array.Clear(polygon, 0, polygon.Length);
+            Array.Resize(ref edge, 2);
+            Array.Resize(ref polygon, 0);
+            intersection = new PointF(-1, -1);
+
+            pictureBox1.Invalidate();
+            minEdgePoint = new Point(9999999, 9999999);
+            maxEdgePoint = new Point(-1, -1);
+        }
     }
 }
