@@ -14,9 +14,10 @@ namespace CS332_Lab4
     {
         private Graphics g;
         private bool isLine, isPolygon, isDot, isAroundCenter, isScaleAroundCenter;    //переменные для событий
-        private PointF startPoint, endPoint = PointF.Empty;     //отрисовка линий
+        private PointF startPoint, endPoint, rotatePoint = PointF.Empty;     //отрисовка линий
         private PointF mainPoint = new PointF(0, 0);
         private PointF minPolyPoint, maxPolyPoint, minEdgePoint, maxEdgePoint;
+        private int countrotate = 0;
 
         private PointF[] edge = new PointF[2];
         private PointF[] polygon = new PointF[0];
@@ -33,7 +34,159 @@ namespace CS332_Lab4
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             g = Graphics.FromImage(pictureBox1.Image);
             g.Clear(Color.White);
-        }  
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            offsetX = (int)numericUpDown1.Value;
+            offsetY = (int)numericUpDown2.Value;
+            rotateAngle = (double)numericUpDown3.Value;
+            isAroundCenter = checkBox1.Checked;
+            isScaleAroundCenter = checkBox2.Checked;
+            scaleX = (double)numericUpDown4.Value / 100d;
+            scaleY = (double)numericUpDown5.Value / 100d;
+
+            if (isLine)
+            {
+                for (int i = 0; i < edge.Length; i++)
+                {
+                    Translate(ref edge[i]);
+                    Rotate(ref edge[i], 0, 0);
+                }
+            }
+            else if (isPolygon)
+            {
+                for (int i = 0; i < polygon.Length; i++)
+                {
+                    Translate(ref polygon[i]);
+                    var angle = (rotateAngle / 180 * Math.PI);                  
+                    if (!isAroundCenter)
+                    {
+                        var pointA = -mainPoint.X * Math.Cos(angle) + mainPoint.Y * Math.Sin(angle) + mainPoint.X;
+                        var pointB = -mainPoint.X * Math.Sin(angle) - mainPoint.Y * Math.Cos(angle) + mainPoint.Y;
+                        Rotate(ref polygon[i], pointA, pointB);
+                    }
+                    else
+                    {
+                        if (countrotate < 1)
+                        {
+                            rotatePoint = ariphHelp();
+                            var pointA = -rotatePoint.X * Math.Cos(angle) + rotatePoint.Y * Math.Sin(angle) + rotatePoint.X;
+                            var pointB = -rotatePoint.X * Math.Sin(angle) - rotatePoint.Y * Math.Cos(angle) + rotatePoint.Y;
+                            countrotate = 1;
+                            Rotate(ref polygon[i], pointA, pointB);
+                        }
+                        else
+                        {
+                            var pointA = -rotatePoint.X * Math.Cos(angle) + rotatePoint.Y * Math.Sin(angle) + rotatePoint.X;
+                            var pointB = -rotatePoint.X * Math.Sin(angle) - rotatePoint.Y * Math.Cos(angle) + rotatePoint.Y;
+                            Rotate(ref polygon[i], pointA, pointB);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < dot.Length; i++)
+                {
+                    Translate(ref dot[i]);
+                    //Rotate(ref dot[i]);
+                }
+            }
+
+            startPoint = edge[0];
+            endPoint = edge[1];
+            pictureBox1.Invalidate();
+        }
+
+        //Смещение
+        private void Translate(ref PointF Point)
+        {
+            double[] offsetVector = new double[3] { Point.X, Point.Y, 1 };
+            double[,] Matrix = new double[3, 3];
+
+            double[] resultVector = new double[3];
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (i == j)
+                        Matrix[i, j] = 1;
+                    else if (i == 0 && j == 2)
+                        Matrix[i, j] = offsetX;
+                    else if (i == 1 && j == 2)
+                        Matrix[i, j] = offsetY;
+                    else
+                        Matrix[i, j] = 0;
+                }
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                    resultVector[i] += Matrix[i, j] * offsetVector[j];
+            }
+
+            Point.X = (float)resultVector[0];
+            Point.Y = (float)resultVector[1];
+        }
+
+        //Поворот
+        private void Rotate(ref PointF Point, double help1, double help2)
+        {
+            var angle = (rotateAngle / 180 * Math.PI);
+
+            if (isLine)
+            {
+                if (isAroundCenter)
+                {
+                    var rotatePoint = new PointF((startPoint.X + endPoint.X) / 2, (startPoint.Y + endPoint.Y) / 2);
+                    help1 = -rotatePoint.X * (Math.Cos(angle) - 1) + rotatePoint.Y * Math.Sin(angle);
+                    help2 = -rotatePoint.X * Math.Sin(angle) - rotatePoint.Y * (Math.Cos(angle) - 1);
+                }
+                else
+                {
+                    var pointA = -mainPoint.X * Math.Cos(angle) + mainPoint.Y * Math.Sin(angle) + mainPoint.X;
+                    var pointB = -mainPoint.X * Math.Sin(angle) - mainPoint.Y * Math.Cos(angle) + mainPoint.Y;
+                }
+            }
+
+            double[] offsetVector = new double[3] { Point.X, Point.Y, 1 };
+            double[,] Matrix = new double[3, 3];
+            double[] resultVector = new double[3];
+
+            Matrix[0, 0] = Math.Cos(angle);
+            Matrix[0, 1] = -Math.Sin(angle);
+            Matrix[0, 2] = help1;
+            Matrix[1, 0] = Math.Sin(angle);
+            Matrix[1, 1] = Math.Cos(angle);
+            Matrix[1, 2] = help2;
+            Matrix[2, 0] = 0;
+            Matrix[2, 1] = 0;
+            Matrix[2, 2] = 1;
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                    resultVector[i] += offsetVector[j] * Matrix[i, j];
+            }
+
+
+            Point.X = (float)resultVector[0];
+            Point.Y = (float)resultVector[1];
+        }
+
+        private PointF ariphHelp()
+        {
+            float allX = 0, allY = 0;
+            foreach (var p in polygon)
+            {
+                allX += p.X;
+                allY += p.Y;
+            }
+            return new PointF(allX / (polygon.Length), allY / (polygon.Length));
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -195,8 +348,6 @@ namespace CS332_Lab4
 
             if (polygon.Length > 1)
                 e.Graphics.DrawPolygon(Pens.Red, polygon);
-
-            //e.Graphics.DrawLine(Pens.Red, startPoint, endPoint);
         }
 
         //Очистка picturebox'a.
@@ -216,5 +367,7 @@ namespace CS332_Lab4
             minEdgePoint = new Point(9999999, 9999999);
             maxEdgePoint = new Point(-1, -1);
         }
+
+
     }
 }
