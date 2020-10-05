@@ -26,7 +26,7 @@ namespace CS332_Lab4
         private int offsetX = 0, offsetY = 0;   //для поворотов и перемещений
         double rotateAngle = 0, scaleX, scaleY;
 
-        PointF intersection = new PointF(-1, -1);
+        PointF intersection = new PointF(-13, -13);
 
         public Form1()
         {
@@ -59,6 +59,7 @@ namespace CS332_Lab4
                 for (int i = 0; i < polygon.Length; i++)
                 {
                     Translate(ref polygon[i]);
+                    Scale(ref polygon[i]);
                     var angle = (rotateAngle / 180 * Math.PI);                  
                     if (!isAroundCenter )
                     {
@@ -175,6 +176,49 @@ namespace CS332_Lab4
         {
             isAroundDot = false;
             isDraw = true;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (edge.Length > 4)
+            {
+                int n = edge.Length - 3;
+                intersection = Intersection(edge[n - 3], edge[n - 2], edge[n - 1], edge[n]);
+            }
+            else
+                intersection = new PointF(-13, -13);
+
+            if (intersection.X == -13 && intersection.Y == -13)
+                label8.Text = "Не сущ-ет";
+            else
+            {
+                label8.Text = string.Format("X: {0:N2} Y: {1:N2}", intersection.X, intersection.Y);
+                pictureBox1.Invalidate();
+            }
+        }
+
+        private PointF Intersection(PointF p0, PointF p1, PointF p2, PointF p3)
+        {
+            PointF i = new PointF(-1, -1);
+            PointF s1 = new PointF();
+            PointF s2 = new PointF();
+            s1.X = p1.X - p0.X;
+            s1.Y = p1.Y - p0.Y;
+            s2.X = p3.X - p2.X;
+            s2.Y = p3.Y - p2.Y;
+            float s, t;
+            s = (-s1.Y * (p0.X - p2.X) + s1.X * (p0.Y - p2.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
+            t = (s2.X * (p0.Y - p2.Y) - s2.Y * (p0.X - p2.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
+
+            if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+            {
+                i.X = p0.X + (t * s1.X);
+                i.Y = p0.Y + (t * s1.Y);
+
+            }
+            if (i == p0)
+                i = new PointF(-1, -1);
+            return i;
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -382,6 +426,7 @@ namespace CS332_Lab4
 
             if (polygon.Length > 1)
                 e.Graphics.DrawPolygon(Pens.Red, polygon);
+            e.Graphics.DrawEllipse(Pens.Green, intersection.X - 2, intersection.Y - 2, 5, 5);
         }
 
         //Очистка picturebox'a.
@@ -402,6 +447,41 @@ namespace CS332_Lab4
             maxEdgePoint = new Point(-1, -1);
         }
 
+        private void Scale(ref PointF Point)
+        {
+            double[] offsetVector = new double[3] { Point.X, Point.Y, 1 };
+            double[,] Matrix = new double[3, 3];
+            double[] resultVector = new double[3];
+
+            PointF scalePoint;
+            if (isScaleAroundCenter)
+            {
+                scalePoint = new PointF((minPolyPoint.X + maxPolyPoint.X) / 2, (minPolyPoint.Y + maxPolyPoint.Y) / 2);
+            }
+            else
+            {
+                scalePoint = mainPoint;
+            }
+
+            Matrix[0, 0] = scaleX;
+            Matrix[0, 1] = 0;
+            Matrix[0, 2] = (1 - scaleX) * scalePoint.X;
+            Matrix[1, 0] = 0;
+            Matrix[1, 1] = scaleY;
+            Matrix[1, 2] = (1 - scaleY) * scalePoint.Y;
+            Matrix[2, 0] = 0;
+            Matrix[2, 1] = 0;
+            Matrix[2, 2] = 1;
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                    resultVector[i] += Matrix[i, j] * offsetVector[j];
+            }
+
+            Point.X = (float)resultVector[0];
+            Point.Y = (float)resultVector[1];
+        }
 
     }
 }
