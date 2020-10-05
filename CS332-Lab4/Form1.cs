@@ -13,9 +13,9 @@ namespace CS332_Lab4
     public partial class Form1 : Form
     {
         private Graphics g;
-        private bool isLine, isPolygon, isDot, isAroundCenter, isScaleAroundCenter;    //переменные для событий
+        private bool isLine, isPolygon, isDot, isAroundCenter, isAroundDot, isDraw, isScaleAroundCenter;    //переменные для событий
         private PointF startPoint, endPoint, rotatePoint = PointF.Empty;     //отрисовка линий
-        private PointF mainPoint = new PointF(0, 0);
+        private PointF mainPoint, rotatePointt = new PointF(0, 0);
         private PointF minPolyPoint, maxPolyPoint, minEdgePoint, maxEdgePoint;
         private int countrotate = 0;
 
@@ -60,10 +60,12 @@ namespace CS332_Lab4
                 {
                     Translate(ref polygon[i]);
                     var angle = (rotateAngle / 180 * Math.PI);                  
-                    if (!isAroundCenter)
+                    if (!isAroundCenter )
                     {
-                        var pointA = -mainPoint.X * Math.Cos(angle) + mainPoint.Y * Math.Sin(angle) + mainPoint.X;
-                        var pointB = -mainPoint.X * Math.Sin(angle) - mainPoint.Y * Math.Cos(angle) + mainPoint.Y;
+                        //var pointA = -mainPoint.X * Math.Cos(angle) + mainPoint.Y * Math.Sin(angle) + mainPoint.X;
+                        //var pointB = -mainPoint.X * Math.Sin(angle) - mainPoint.Y * Math.Cos(angle) + mainPoint.Y;
+                        var pointA = -rotatePointt.X * Math.Cos(angle) + rotatePointt.Y * Math.Sin(angle) + rotatePointt.X;
+                        var pointB = -rotatePointt.X * Math.Sin(angle) - rotatePointt.Y * Math.Cos(angle) + rotatePointt.Y;
                         Rotate(ref polygon[i], pointA, pointB);
                     }
                     else
@@ -83,14 +85,6 @@ namespace CS332_Lab4
                             Rotate(ref polygon[i], pointA, pointB);
                         }
                     }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < dot.Length; i++)
-                {
-                    Translate(ref dot[i]);
-                    //Rotate(ref dot[i]);
                 }
             }
 
@@ -177,6 +171,28 @@ namespace CS332_Lab4
             Point.Y = (float)resultVector[1];
         }
 
+        private void button7_Click(object sender, EventArgs e)
+        {
+            isAroundDot = false;
+            isDraw = true;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            isAroundDot = true;
+            isDraw = false;
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            rotatePointt = e.Location;
+        }
+
         private PointF ariphHelp()
         {
             float allX = 0, allY = 0;
@@ -190,23 +206,32 @@ namespace CS332_Lab4
 
         private void button1_Click(object sender, EventArgs e)
         {
-            isDot = false;
-            isLine = false;
-            isPolygon = true;
+            if (isDraw)
+            {
+                isDot = false;
+                isLine = false;
+                isPolygon = true;
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            isDot = false;
-            isLine = true;
-            isPolygon = false;
+            if (isDraw)
+            {
+                isDot = false;
+                isLine = true;
+                isPolygon = false;
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            isDot = true;
-            isLine = false;
-            isPolygon = false;
+            if (isDraw)
+            {
+                isDot = true;
+                isLine = false;
+                isPolygon = false;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -218,20 +243,23 @@ namespace CS332_Lab4
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (isLine)
+                if (isDraw)
                 {
-                    startPoint = e.Location;
-                }
-                else if (isPolygon && polygon.Length == 0)
-                {
-                    minPolyPoint = maxPolyPoint = e.Location;
-                    startPoint = e.Location;
-                    Array.Resize(ref polygon, 1);
-                    polygon[0] = startPoint;
-                }
-                else if (isDot)
-                {
-                    startPoint = e.Location;
+                    if (isLine)
+                    {
+                        startPoint = e.Location;
+                    }
+                    else if (isPolygon && polygon.Length == 0)
+                    {
+                        minPolyPoint = maxPolyPoint = e.Location;
+                        startPoint = e.Location;
+                        Array.Resize(ref polygon, 1);
+                        polygon[0] = startPoint;
+                    }
+                    else if (isDot)
+                    {
+                        startPoint = e.Location;
+                    }
                 }
             }
         }
@@ -240,54 +268,57 @@ namespace CS332_Lab4
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (isLine)
+                if (isDraw)
                 {
-                    edge[edge.Length - 2] = new PointF(startPoint.X, startPoint.Y);
-                    edge[edge.Length - 1] = new PointF(endPoint.X, endPoint.Y);
-                    Array.Resize(ref edge, edge.Length + 2);
-
-                    FindMin(ref minEdgePoint, endPoint);
-                    FindMax(ref maxEdgePoint, endPoint);
-
-                    FindMin(ref minEdgePoint, startPoint);
-                    FindMax(ref maxEdgePoint, startPoint);                
-                }
-                else if (isPolygon)
-                {
-                    Array.Resize(ref polygon, polygon.Length + 1);
-
-                    if (endPoint.X < minPolyPoint.X)
+                    if (isLine)
                     {
-                        minPolyPoint.X = endPoint.X;
-                    }
-                    if (endPoint.Y < minPolyPoint.Y)
-                    {
-                        minPolyPoint.Y = endPoint.Y;
-                    }
-                    if (endPoint.X > maxPolyPoint.X)
-                    {
-                        maxPolyPoint.X = endPoint.X;
-                    }
-                    if (endPoint.Y > maxPolyPoint.Y)
-                    {
-                        maxPolyPoint.Y = endPoint.Y;
-                    }
+                        edge[edge.Length - 2] = new PointF(startPoint.X, startPoint.Y);
+                        edge[edge.Length - 1] = new PointF(endPoint.X, endPoint.Y);
+                        Array.Resize(ref edge, edge.Length + 2);
 
-                    polygon[polygon.Length - 1] = endPoint;
-                    startPoint = endPoint;
-                }
-                else if (isDot)
-                {
-                    Array.Resize(ref dot, dot.Length + 1);
-                    dot[dot.Length - 1] = startPoint;
-                }
+                        FindMin(ref minEdgePoint, endPoint);
+                        FindMax(ref maxEdgePoint, endPoint);
+
+                        FindMin(ref minEdgePoint, startPoint);
+                        FindMax(ref maxEdgePoint, startPoint);
+                    }
+                    else if (isPolygon)
+                    {
+                        Array.Resize(ref polygon, polygon.Length + 1);
+
+                        if (endPoint.X < minPolyPoint.X)
+                        {
+                            minPolyPoint.X = endPoint.X;
+                        }
+                        if (endPoint.Y < minPolyPoint.Y)
+                        {
+                            minPolyPoint.Y = endPoint.Y;
+                        }
+                        if (endPoint.X > maxPolyPoint.X)
+                        {
+                            maxPolyPoint.X = endPoint.X;
+                        }
+                        if (endPoint.Y > maxPolyPoint.Y)
+                        {
+                            maxPolyPoint.Y = endPoint.Y;
+                        }
+
+                        polygon[polygon.Length - 1] = endPoint;
+                        startPoint = endPoint;
+                    }
+                    else if (isDot)
+                    {
+                        Array.Resize(ref dot, dot.Length + 1);
+                        dot[dot.Length - 1] = startPoint;
+                    }
+                }             
             }
             else
             {
                 mainPoint.X = e.Location.X;
                 mainPoint.Y = e.Location.Y;
             }
-
+            rotatePointt = e.Location;
 
             pictureBox1.Invalidate();
         }
@@ -320,15 +351,18 @@ namespace CS332_Lab4
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (isLine)
+                if (isDraw)
                 {
-                    endPoint = e.Location;
-                    pictureBox1.Invalidate();
-                }
-                else if (isPolygon)
-                {
-                    endPoint = e.Location;
-                    pictureBox1.Invalidate();
+                    if (isLine)
+                    {
+                        endPoint = e.Location;
+                        pictureBox1.Invalidate();
+                    }
+                    else if (isPolygon)
+                    {
+                        endPoint = e.Location;
+                        pictureBox1.Invalidate();
+                    }
                 }
             }
         }
