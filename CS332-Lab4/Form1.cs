@@ -219,6 +219,94 @@ namespace CS332_Lab4
             return i;
         }
 
+        private bool isInside(PointF[] polygon, PointF p)
+        {
+            int n = polygon.Length;
+            if (n < 3) return false;
+
+            if (Array.Exists(polygon, point => point.Equals(p)))
+                return true;
+
+            PointF extreme = new PointF(pictureBox1.Width, p.Y);
+
+            int count = 0, i = 0;
+            do
+            {
+                int next = (i + 1) % n;
+                PointF intersection = Intersection(polygon[i], polygon[next], p, extreme);
+                if (intersection.X != -1)
+                {
+                    if (orientation(polygon[i], p, polygon[next]) == 0)
+                        return onSegment(polygon[i], p, polygon[next]);
+                    count++;
+                }
+                i = next;
+            } while (i != 0);
+
+            return count % 2 == 1;
+
+            bool onSegment(PointF q, PointF e, PointF r)
+            {
+                if (q.X <= Math.Max(e.X, r.X) && q.X >= Math.Min(e.X, r.X) &&
+                        q.Y <= Math.Max(e.Y, r.Y) && q.Y >= Math.Min(e.Y, r.Y))
+                    return true;
+                return false;
+            }
+
+            int orientation(PointF pp, PointF q, PointF r)
+            {
+                float val = (q.Y - pp.Y) * (r.X - q.X) -
+                          (q.X - pp.X) * (r.Y - q.Y);
+                if (val == 0) return 0;
+                return (val > 0) ? 1 : 2;
+            }
+        }
+
+        int findWhereThePoint(PointF p, PointF A, PointF B)
+        {
+            PointF a = new PointF();
+            a.X = B.X - A.X;
+            a.Y = B.Y - A.Y;
+
+            PointF b = new PointF();
+            b.X = p.X - A.X;
+            b.Y = p.Y - A.Y;
+
+            float result = a.X * b.Y - a.Y * b.X;
+            return (int)result;
+                //p.Y * B.X - p.X * B.Y > 0 ? 1 : -1;
+        }
+
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (polygon.Length > 2)
+            {
+                if (isInside(polygon, rotatePointt))
+                {
+                    label9.Text = "Принадлежит многоугольнику";
+                }
+                else
+                {
+                    label9.Text = "Не принадлежит многоугольнику";
+                }
+            }
+            else
+                label9.Text = "";
+
+            if (edge.Length > 2)
+            {
+                int n = edge.Length - 3;
+                int pos = findWhereThePoint(rotatePointt, edge[n], edge[n - 1]);
+                if (pos > 0)
+                    label10.Text = "Слева от линии";
+                else
+                    label10.Text = "Справа от линии";
+            }
+            else
+                label10.Text = "";
+        }
+
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
@@ -274,6 +362,7 @@ namespace CS332_Lab4
                 isLine = false;
                 isPolygon = false;
             }
+            label10.Text = "";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -443,6 +532,8 @@ namespace CS332_Lab4
             pictureBox1.Invalidate();
             minEdgePoint = new Point(9999999, 9999999);
             maxEdgePoint = new Point(-1, -1);
+            label9.Text = "";
+            label10.Text = "";
         }
 
         private void Scale(ref PointF Point)
