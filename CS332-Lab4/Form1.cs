@@ -458,7 +458,7 @@ namespace CS332_Lab4
             }
             else
             {
-                scalePoint = mainPoint;
+                scalePoint = rotatePointt;
             }
 
             Matrix[0, 0] = scaleX;
