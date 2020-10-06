@@ -52,6 +52,9 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
+            this.button9 = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -314,7 +317,7 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(149, 308);
+            this.button8.Location = new System.Drawing.Point(149, 280);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(138, 37);
             this.button8.TabIndex = 23;
@@ -330,11 +333,40 @@
             this.label8.Size = new System.Drawing.Size(0, 13);
             this.label8.TabIndex = 24;
             // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(149, 332);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(135, 40);
+            this.button9.TabIndex = 25;
+            this.button9.Text = "Найти положение точки";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(313, 423);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(0, 13);
+            this.label9.TabIndex = 26;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(628, 423);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(0, 13);
+            this.label10.TabIndex = 27;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.button9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
@@ -399,6 +431,9 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
     }
 }
 
