@@ -50,6 +50,8 @@
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -240,9 +242,19 @@
             // numericUpDown4
             // 
             this.numericUpDown4.Location = new System.Drawing.Point(207, 151);
+            this.numericUpDown4.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.numericUpDown4.Name = "numericUpDown4";
             this.numericUpDown4.Size = new System.Drawing.Size(51, 20);
             this.numericUpDown4.TabIndex = 16;
+            this.numericUpDown4.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // label7
             // 
@@ -256,9 +268,19 @@
             // numericUpDown5
             // 
             this.numericUpDown5.Location = new System.Drawing.Point(207, 182);
+            this.numericUpDown5.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.numericUpDown5.Name = "numericUpDown5";
             this.numericUpDown5.Size = new System.Drawing.Size(51, 20);
             this.numericUpDown5.TabIndex = 18;
+            this.numericUpDown5.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // checkBox2
             // 
@@ -282,7 +304,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(19, 205);
+            this.button7.Location = new System.Drawing.Point(16, 205);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(75, 23);
             this.button7.TabIndex = 21;
@@ -290,11 +312,31 @@
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(149, 308);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(138, 37);
+            this.button8.TabIndex = 23;
+            this.button8.Text = "Найти точку пересечения";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(155, 348);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(0, 13);
+            this.label8.TabIndex = 24;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.checkBox2);
@@ -355,6 +397,8 @@
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label8;
     }
 }
 
