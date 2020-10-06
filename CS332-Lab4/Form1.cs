@@ -63,8 +63,6 @@ namespace CS332_Lab4
                     var angle = (rotateAngle / 180 * Math.PI);                  
                     if (!isAroundCenter )
                     {
-                        //var pointA = -mainPoint.X * Math.Cos(angle) + mainPoint.Y * Math.Sin(angle) + mainPoint.X;
-                        //var pointB = -mainPoint.X * Math.Sin(angle) - mainPoint.Y * Math.Cos(angle) + mainPoint.Y;
                         var pointA = -rotatePointt.X * Math.Cos(angle) + rotatePointt.Y * Math.Sin(angle) + rotatePointt.X;
                         var pointB = -rotatePointt.X * Math.Sin(angle) - rotatePointt.Y * Math.Cos(angle) + rotatePointt.Y;
                         Rotate(ref polygon[i], pointA, pointB);
